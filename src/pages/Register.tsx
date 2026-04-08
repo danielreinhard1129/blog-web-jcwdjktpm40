@@ -4,8 +4,9 @@ import { BookOpen, Lock, Mail, User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance2 } from "../lib/axios";
 import { registerSchema, type RegisterSchema } from "../schemas/registerSchema";
+import type { AxiosError } from "axios";
 
 function Register() {
   const {
@@ -20,7 +21,7 @@ function Register() {
 
   const { mutateAsync: registerMutation, isPending } = useMutation({
     mutationFn: async (payload: RegisterSchema) => {
-      await axiosInstance.post("/users/register", {
+      await axiosInstance2.post("/auth/register", {
         name: payload.name,
         email: payload.email,
         password: payload.password,
@@ -30,8 +31,8 @@ function Register() {
       toast.success("Register success!");
       navigate("/login");
     },
-    onError: () => {
-      toast.error("Register failed!");
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(error.response?.data.message || "Register failed!");
     },
   });
 
