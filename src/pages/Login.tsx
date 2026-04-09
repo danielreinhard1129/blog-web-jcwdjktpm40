@@ -35,7 +35,6 @@ function Login() {
         email: response.user.email,
         image: response.user.image,
         role: response.user.role,
-        accessToken: response.accessToken,
       });
       toast.success("Login success!");
       navigate("/");
