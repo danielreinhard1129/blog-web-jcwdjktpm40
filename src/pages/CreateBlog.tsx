@@ -5,17 +5,11 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance2 } from "../lib/axios";
 import {
   createBlogSchema,
   type CreateBlogSchema,
 } from "../schemas/createBlogSchema";
-import { generateRandomString } from "../utils/generateRandomString";
-
-interface FileServiceResponse {
-  fileURL: string;
-  filePath: string;
-}
 
 function CreateBlog() {
   const {
@@ -31,25 +25,14 @@ function CreateBlog() {
 
   const { mutateAsync: createBlogMutation, isPending } = useMutation({
     mutationFn: async (payload: CreateBlogSchema) => {
-      // step 1 -> masukin thumbnail ke file service
       const form = new FormData();
-      form.append("file", payload.thumbnail);
+      form.append("title", payload.title);
+      form.append("description", payload.description);
+      form.append("content", payload.content);
+      form.append("category", payload.category);
+      form.append("thumbnail", payload.thumbnail);
 
-      const folderName = "images";
-      const fileName = generateRandomString(10);
-      const response = await axiosInstance.post<FileServiceResponse>(
-        `/files/${folderName}/${fileName}`,
-        form,
-      );
-
-      // step 2 -> masukin data ke database table Blogs
-      await axiosInstance.post(`/data/Blogs`, {
-        thumbnail: response.data.fileURL,
-        author: payload.author,
-        description: payload.description,
-        title: payload.title,
-        content: payload.content,
-      });
+      await axiosInstance2.post("/blogs", form);
     },
     onSuccess: () => {
       toast.success("Create Blog success");
@@ -126,24 +109,24 @@ function CreateBlog() {
 
             <div>
               <label
-                htmlFor="author"
+                htmlFor="category"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Author
+                Category
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  id="author"
+                  id="category"
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition"
-                  placeholder="Your name"
-                  {...register("author")}
+                  placeholder="Your category"
+                  {...register("category")}
                 />
 
-                {errors.author && (
+                {errors.category && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.author.message}
+                    {errors.category.message}
                   </p>
                 )}
               </div>
