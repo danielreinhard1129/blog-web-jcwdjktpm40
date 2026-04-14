@@ -30,16 +30,16 @@ const BlogCard = ({ blog }: BlogCardProps) => (
       <div className="flex items-center text-sm text-gray-500 mb-4 space-x-4">
         <div className="flex items-center space-x-1">
           <User className="h-4 w-4" />
-          <span>{blog.author}</span>
+          <span>{blog.user.name}</span>
         </div>
         <div className="flex items-center space-x-1">
           <Calendar className="h-4 w-4" />
-          <span>{formatDate(blog.created)}</span>
+          <span>{formatDate(blog.createdAt)}</span>
         </div>
       </div>
 
       <Link
-        to={`/blogs/${blog.objectId}`}
+        to={`/blogs/${blog.slug}`}
         className="inline-flex items-center space-x-2 text-yellow-500 hover:text-purple-600 font-semibold transition-colors"
       >
         <span>Read More</span>

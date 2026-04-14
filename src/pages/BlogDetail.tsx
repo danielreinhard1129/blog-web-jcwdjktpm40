@@ -9,11 +9,11 @@ import BlogDetailLoading from "../components/BlogDetailLoading";
 import BlogDetailNotFound from "../components/BlogDetailNotFound";
 import BlogDetailThumbnail from "../components/BlogDetailThumbnail";
 import Navbar from "../components/Navbar";
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance2 } from "../lib/axios";
 import type { Blog } from "../types/blog";
 
 function BlogDetail() {
-  const { objectId } = useParams<{ objectId: string }>();
+  const { slug } = useParams<{ slug: string }>();
 
   const {
     data: blog,
@@ -21,9 +21,9 @@ function BlogDetail() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["blog", objectId],
+    queryKey: ["blog", slug],
     queryFn: async () => {
-      const response = await axiosInstance.get<Blog>(`/data/Blogs/${objectId}`);
+      const response = await axiosInstance2.get<Blog>(`/blogs/${slug}`);
       return response.data;
     },
   });
@@ -58,8 +58,8 @@ function BlogDetail() {
           <div className="p-8 md:p-12">
             <BlogDetailHeader
               title={blog.title}
-              author={blog.author}
-              created={blog.created}
+              author={blog.user.name}
+              created={blog.createdAt}
             />
 
             <BlogDetailContent
