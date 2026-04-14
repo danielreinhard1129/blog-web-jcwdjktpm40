@@ -4,7 +4,7 @@ import { formatDate } from "../utils/formatter";
 interface BlogDetailHeaderProps {
   title: string;
   author: string;
-  created: number;
+  created: Date;
 }
 
 const BlogDetailHeader = ({
