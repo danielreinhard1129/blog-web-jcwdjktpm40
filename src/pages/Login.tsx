@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router";
 import { axiosInstance2 } from "../lib/axios";
 import { loginSchema, type LoginSchema } from "../schemas/loginSchema";
 import { useAuth } from "../stores/useAuth";
+import { useGoogleLogin } from "@react-oauth/google";
 
 function Login() {
   const {
@@ -47,6 +48,29 @@ function Login() {
   const onSubmit = async (data: LoginSchema) => {
     await loginMutation(data);
   };
+
+  const handleLoginByGoogle = useGoogleLogin({
+    onSuccess: async ({ access_token }) => {
+      try {
+        const response = await axiosInstance2.post("/auth/google", {
+          accessToken: access_token,
+        });
+
+        login({
+          id: response.data.user.id,
+          name: response.data.user.name,
+          email: response.data.user.email,
+          image: response.data.user.image,
+          role: response.data.user.role,
+        });
+
+        navigate("/");
+      } catch (e) {
+        console.log(e);
+        toast.error("Login failed!");
+      }
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -121,6 +145,49 @@ function Login() {
             className="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors shadow-md"
           >
             {isPending ? "Loading" : "Login"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleLoginByGoogle()}
+            className="flex items-center justify-center gap-3 w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition"
+          >
+            {/* Google Icon */}
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 48 48"
+              className="w-5 h-5"
+            >
+              <path
+                fill="#FFC107"
+                d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 
+          12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.7 6.1 29.1 4 24 4 12.9 4 4 12.9 4 
+          24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"
+              />
+              <path
+                fill="#FF3D00"
+                d="M6.3 14.7l6.6 4.8C14.5 16.1 18.9 12 24 12c3 0 5.7 1.1 
+          7.8 2.9l5.7-5.7C33.7 6.1 29.1 4 24 4c-7.7 0-14.3 4.3-17.7 
+          10.7z"
+              />
+              <path
+                fill="#4CAF50"
+                d="M24 44c5.1 0 9.8-2 13.4-5.3l-6.2-5.1C29.1 35.9 
+          26.7 36 24 36c-5.2 0-9.7-3.3-11.3-8l-6.5 
+          5C9.5 39.6 16.2 44 24 44z"
+              />
+              <path
+                fill="#1976D2"
+                d="M43.6 20.5H42V20H24v8h11.3c-1.1 3-3.3 5.4-6.1 
+          6.9l6.2 5.1C36.9 37.5 40 31.2 40 24c0-1.3-.1-2.7-.4-3.5z"
+              />
+            </svg>
+
+            {/* Text */}
+            <span className="text-sm font-medium text-gray-700">
+              Continue with Google
+            </span>
           </button>
         </form>
 
