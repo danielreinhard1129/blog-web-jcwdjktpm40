@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 import BackNavigation from "./BackNavigation";
 
 interface BlogDetailErrorProps {

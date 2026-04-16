@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useGoogleLogin } from "@react-oauth/google";
 import { BookOpen, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
-import { axiosInstance2 } from "../lib/axios";
+import useLogin from "../hooks/api/auth/useLogin";
+import { axiosInstance } from "../lib/axios";
 import { loginSchema, type LoginSchema } from "../schemas/loginSchema";
 import { useAuth } from "../stores/useAuth";
-import { useGoogleLogin } from "@react-oauth/google";
 
 function Login() {
   const {
@@ -21,29 +21,7 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const { mutateAsync: loginMutation, isPending } = useMutation({
-    mutationFn: async (payload: LoginSchema) => {
-      const response = await axiosInstance2.post("/auth/login", {
-        email: payload.email,
-        password: payload.password,
-      });
-      return response.data;
-    },
-    onSuccess: (response) => {
-      login({
-        id: response.user.id,
-        name: response.user.name,
-        email: response.user.email,
-        image: response.user.image,
-        role: response.user.role,
-      });
-      toast.success("Login success!");
-      navigate("/");
-    },
-    onError: () => {
-      toast.error("Login failed!");
-    },
-  });
+  const { mutateAsync: loginMutation, isPending } = useLogin();
 
   const onSubmit = async (data: LoginSchema) => {
     await loginMutation(data);
@@ -52,7 +30,7 @@ function Login() {
   const handleLoginByGoogle = useGoogleLogin({
     onSuccess: async ({ access_token }) => {
       try {
-        const response = await axiosInstance2.post("/auth/google", {
+        const response = await axiosInstance.post("/auth/google", {
           accessToken: access_token,
         });
 

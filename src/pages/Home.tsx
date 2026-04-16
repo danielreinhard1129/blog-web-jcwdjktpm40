@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -6,34 +5,15 @@ import BlogCard from "../components/BlogCard";
 import BlogCardSkeleton from "../components/BlogCardSkeleton";
 import Navbar from "../components/Navbar";
 import Pagination from "../components/Pagination";
-import { axiosInstance2 } from "../lib/axios";
+import useGetBlogs from "../hooks/api/blog/useGetBlogs";
 import { useAuth } from "../stores/useAuth";
-import type { Blog } from "../types/blog";
-import type { PageableResponse } from "../types/pagination";
 
 function Home() {
   const { user } = useAuth();
 
   const [page, setPage] = useState<number>(1);
 
-  const {
-    data: blogs,
-    isPending,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["blogs", page],
-    queryFn: async () => {
-      const { data } = await axiosInstance2.get<PageableResponse<Blog>>(
-        "/blogs",
-        {
-          params: { page, take: 6 },
-        },
-      );
-
-      return data;
-    },
-  });
+  const { data: blogs, isPending, error, refetch } = useGetBlogs({ page });
 
   return (
     <div className="min-h-screen bg-gray-50">

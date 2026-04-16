@@ -1,11 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
 import { BookOpen, Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router";
-import { axiosInstance2 } from "../lib/axios";
+import { useParams } from "react-router";
+import useResetPassword from "../hooks/api/auth/useResetPassword";
 import {
   resetPasswordSchema,
   type ResetPasswordSchema,
@@ -20,28 +17,11 @@ function ResetPassword() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const navigate = useNavigate();
-
   const { token } = useParams<{ token: string }>();
 
-  const { mutateAsync: resetPasswordMutation, isPending } = useMutation({
-    mutationFn: async (payload: ResetPasswordSchema) => {
-      await axiosInstance2.post(
-        "/auth/reset-password",
-        {
-          password: payload.password,
-        },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-    },
-    onSuccess: () => {
-      toast.success("Reset password success!");
-      navigate("/login");
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toast.error(error.response?.data.message || "Reset password failed!");
-    },
-  });
+  const { mutateAsync: resetPasswordMutation, isPending } = useResetPassword(
+    token!,
+  );
 
   const onSubmit = async (data: ResetPasswordSchema) => {
     await resetPasswordMutation(data);

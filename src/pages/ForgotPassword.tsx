@@ -1,10 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { BookOpen, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
-import { axiosInstance2 } from "../lib/axios";
+import useForgotPassword from "../hooks/api/auth/useForgotPassword";
 import {
   forgotPasswordSchema,
   type ForgotPasswordSchema,
@@ -19,23 +16,8 @@ function ForgotPassword() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const navigate = useNavigate();
-
-  const { mutateAsync: forgotPasswordMutation, isPending } = useMutation({
-    mutationFn: async (payload: ForgotPasswordSchema) => {
-      const response = await axiosInstance2.post("/auth/forgot-password", {
-        email: payload.email,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Send email success, please check your inbox");
-      navigate("/");
-    },
-    onError: () => {
-      toast.error("Send email failed!");
-    },
-  });
+  const { mutateAsync: forgotPasswordMutation, isPending } =
+    useForgotPassword();
 
   const onSubmit = async (data: ForgotPasswordSchema) => {
     await forgotPasswordMutation(data);

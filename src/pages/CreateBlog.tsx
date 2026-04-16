@@ -1,11 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { File as FileEdit, FileText, Image, User } from "lucide-react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar";
-import { axiosInstance2 } from "../lib/axios";
+import useCreateBlog from "../hooks/api/blog/useCreateBlog";
 import {
   createBlogSchema,
   type CreateBlogSchema,
@@ -21,27 +18,7 @@ function CreateBlog() {
     resolver: zodResolver(createBlogSchema),
   });
 
-  const navigate = useNavigate();
-
-  const { mutateAsync: createBlogMutation, isPending } = useMutation({
-    mutationFn: async (payload: CreateBlogSchema) => {
-      const form = new FormData();
-      form.append("title", payload.title);
-      form.append("description", payload.description);
-      form.append("content", payload.content);
-      form.append("category", payload.category);
-      form.append("thumbnail", payload.thumbnail);
-
-      await axiosInstance2.post("/blogs", form);
-    },
-    onSuccess: () => {
-      toast.success("Create Blog success");
-      navigate("/");
-    },
-    onError: () => {
-      toast.error("Create Blog failed");
-    },
-  });
+  const { mutateAsync: createBlogMutation, isPending } = useCreateBlog();
 
   const onSubmit = async (data: CreateBlogSchema) => {
     await createBlogMutation(data);

@@ -1,4 +1,4 @@
-import type { Blog } from "../types/blog";
+import type { Blog } from "../../types/blog";
 
 interface BlogDetailThumbnailProps {
   blog: Blog;
