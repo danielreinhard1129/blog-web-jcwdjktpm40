@@ -1,5 +1,5 @@
 import { Calendar, User } from "lucide-react";
-import { formatDate } from "../utils/formatter";
+import { formatDate } from "../../utils/formatter";
 
 interface BlogDetailHeaderProps {
   title: string;

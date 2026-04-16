@@ -1,32 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "react-router";
-import BackNavigation from "../components/BackNavigation";
-import BlogDetailContent from "../components/BlogDetailContent";
-import BlogDetailError from "../components/BlogDetailError";
-import BlogDetailHeader from "../components/BlogDetailHeader";
-import BlogDetailLoading from "../components/BlogDetailLoading";
-import BlogDetailNotFound from "../components/BlogDetailNotFound";
-import BlogDetailThumbnail from "../components/BlogDetailThumbnail";
+import BackNavigation from "../components/BlogDetail/BackNavigation";
+import BlogDetailContent from "../components/BlogDetail/BlogDetailContent";
+import BlogDetailError from "../components/BlogDetail/BlogDetailError";
+import BlogDetailHeader from "../components/BlogDetail/BlogDetailHeader";
+import BlogDetailLoading from "../components/BlogDetail/BlogDetailLoading";
+import BlogDetailNotFound from "../components/BlogDetail/BlogDetailNotFound";
+import BlogDetailThumbnail from "../components/BlogDetail/BlogDetailThumbnail";
 import Navbar from "../components/Navbar";
-import { axiosInstance2 } from "../lib/axios";
-import type { Blog } from "../types/blog";
+import useGetBlogBySlug from "../hooks/api/blog/useGetBlogBySlug";
 
 function BlogDetail() {
   const { slug } = useParams<{ slug: string }>();
 
-  const {
-    data: blog,
-    isPending,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["blog", slug],
-    queryFn: async () => {
-      const response = await axiosInstance2.get<Blog>(`/blogs/${slug}`);
-      return response.data;
-    },
-  });
+  const { data: blog, isPending, error, refetch } = useGetBlogBySlug(slug);
 
   if (isPending) {
     return <BlogDetailLoading />;

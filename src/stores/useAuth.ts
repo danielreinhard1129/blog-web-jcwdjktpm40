@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { axiosInstance2 } from "../lib/axios";
+import { axiosInstance } from "../lib/axios";
 
 interface UserAuth {
   id: number;
@@ -22,7 +22,7 @@ export const useAuth = create<Store>()(
       user: null,
       login: (user) => set({ user }),
       logout: async () => {
-        await axiosInstance2.post("/auth/logout");
+        await axiosInstance.post("/auth/logout");
         set({ user: null });
         window.location.href = "/";
       },
