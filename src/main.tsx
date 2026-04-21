@@ -7,43 +7,58 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import "./index.css";
 import { authLoader } from "./loaders/auth";
-import BlogDetail from "./pages/BlogDetail";
-import CreateBlog from "./pages/CreateBlog";
-import ForgotPassword from "./pages/ForgotPassword";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    lazy: async () => {
+      const { default: Home } = await import("./pages/Home");
+      return { Component: Home };
+    },
   },
   {
     path: "/register",
-    element: <Register />,
+    lazy: async () => {
+      const { default: Register } = await import("./pages/Register");
+      return { Component: Register };
+    },
   },
   {
     path: "/login",
-    element: <Login />,
+    lazy: async () => {
+      const { default: Login } = await import("./pages/Login");
+      return { Component: Login };
+    },
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />,
+    lazy: async () => {
+      const { default: ForgotPassword } =
+        await import("./pages/ForgotPassword");
+      return { Component: ForgotPassword };
+    },
   },
   {
     path: "/create",
-    element: <CreateBlog />,
     loader: authLoader,
+    lazy: async () => {
+      const { default: CreateBlog } = await import("./pages/CreateBlog");
+      return { Component: CreateBlog };
+    },
   },
   {
     path: "/blogs/:slug",
-    element: <BlogDetail />,
+    lazy: async () => {
+      const { default: BlogDetail } = await import("./pages/BlogDetail");
+      return { Component: BlogDetail };
+    },
   },
   {
     path: "/reset-password/:token",
-    element: <ResetPassword />,
+    lazy: async () => {
+      const { default: ResetPassword } = await import("./pages/ResetPassword");
+      return { Component: ResetPassword };
+    },
   },
 ]);
 
